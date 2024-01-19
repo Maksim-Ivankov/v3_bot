@@ -62,6 +62,7 @@ count_long_take = 0
 count_short_take = 0
 count_long_loss = 0
 count_short_loss = 0
+sost_trade = 0
 
 client = UMFutures(key=key, secret=secret)
 
@@ -250,27 +251,28 @@ def check_trade(price):
     global count_long_loss
     global count_short_take
     global count_short_loss
+    global sost_trade
     if signal_trade == 'long':
         if float(now_price_trade)>float(take_profit_price):
             close_trade('+',TP)
             count_long_take=count_long_take+1
-            time.sleep(wait_time*2)
+            sost_trade =1
             return 1
         if float(now_price_trade)<float(stop_loss_price):
             count_long_loss = count_long_loss + 1
             close_trade('-',SL)
-            time.sleep(wait_time*2)
+            sost_trade =1
             return 1
     if signal_trade == 'short':
         if float(now_price_trade)<float(take_profit_price):
             close_trade('+',TP)
             count_short_take = count_short_take+1
-            time.sleep(wait_time*2)
+            sost_trade =1
             return 1
         if float(now_price_trade)>float(stop_loss_price):
             count_short_loss = count_short_loss + 1
             close_trade('-',SL)
-            time.sleep(wait_time*2)
+            sost_trade =1
             return 1
 # -------------------------------------- ТОРГОВЛЯ --------------------------------------
 # -------------------------------------- СТРАТЕГИЯ --------------------------------------
@@ -313,25 +315,29 @@ while True:
     try:     
         sost_trading = 'Депозит = '+str(DEPO)+'| Сделки в плюс принесли '+str(profit)+'| Сделки в минус принесли '+str(loss)+'| На комиссию потратил '+str(commission)
         if open_sl == False:
-            for x,result in enumerate(coin_mas_10):
-                print(result)
-                prices = get_futures_klines(result,TF,volume)
-                trend = check_if_signal(prices,volume)
-                time.sleep(2) # Интервал в 10 секунд, чтобы бинанс не долбить
-                if trend != 'нет сигнала':
-                    symbol = result
-                    print(f'Монета с сигналом - {symbol}')
-                    break
-            # trend = 'long'
-            # symbol = 'UMAUSDT'
-            if trend == "нет сигнала":
-                logger(time.strftime("%d.%m.%Y г. %H:%M", time.localtime()) + ' - Нет сигнала')
-                prt(f'{name_bot}| {time.strftime("%d.%m.%Y г. %H:%M", time.localtime())} - Нет сигнала, ждём {wait_time*2} минут')
-                time.sleep(wait_time*2) # Двойной интервал, если нет сигнала
+            if sost_trade == 1:
+                time.sleep(wait_time*2) # Двойной интервал, если была сделка
             else:
-                print(f'Проверка монеты - {symbol}')
-                price__now = get_price_now_coin(symbol)
-                open_position(trend,get_trade_volume(price__now),price__now) # если есть сигнал и мы не стоим в позиции, то открываем позицию
+                sost_trade = 0
+                for x,result in enumerate(coin_mas_10):
+                    print(result)
+                    prices = get_futures_klines(result,TF,volume)
+                    trend = check_if_signal(prices,volume)
+                    time.sleep(2) # Интервал в 10 секунд, чтобы бинанс не долбить
+                    if trend != 'нет сигнала':
+                        symbol = result
+                        print(f'Монета с сигналом - {symbol}')
+                        break
+                # trend = 'long'
+                # symbol = 'UMAUSDT'
+                if trend == "нет сигнала":
+                    logger(time.strftime("%d.%m.%Y г. %H:%M", time.localtime()) + ' - Нет сигнала')
+                    prt(f'{name_bot}| {time.strftime("%d.%m.%Y г. %H:%M", time.localtime())} - Нет сигнала, ждём {wait_time*2} минут')
+                    time.sleep(wait_time*2) # Двойной интервал, если нет сигнала
+                else:
+                    print(f'Проверка монеты - {symbol}')
+                    price__now = get_price_now_coin(symbol)
+                    open_position(trend,get_trade_volume(price__now),price__now) # если есть сигнал и мы не стоим в позиции, то открываем позицию
         if open_sl == True:
             loop = asyncio.get_event_loop()
             loop.run_until_complete(websocket_trade())
