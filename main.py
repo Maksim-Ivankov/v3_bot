@@ -42,8 +42,8 @@ corner_long = 10 # Угол наклона лонг
 candle_coin_min = 200000 # объем торгов за свечку
 candle_coin_max = 500000 # объем торгов за свечку
 rigime_gen_df = 2 # 1 - сгенерировать датафреймы в файл, 2 - получить датафреймы из файла
-mydir_worker = 'dev/df/worker/'
-mydir_5min = 'dev/df/5min/'
+mydir_worker = '/'
+mydir_5min = '/'
 
 data_value = 'Настройки бота:\nТаймфрейм - '+str(TF)+'\nТейк профит - '+str(TP)+'\nСтоп лосс - '+str(SL)+'\nНачальный депозит - '+str(DEPO)+'\nПлечо - '+str(Leverage)+'\nНазвание бота - '+str(name_bot)+'\nВерх канала - '+str(canal_max)+'\nНиз канала - '+str(canal_min)+'\nУгол наклона шорт - '+str(corner_short)+'\nУгол наклона лонг - '+str(corner_long)+'\nОбъем торгов мин - '+str(candle_coin_min)+'\nОбъём торгов макс - '+str(candle_coin_max)
 
