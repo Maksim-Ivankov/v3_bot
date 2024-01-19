@@ -25,7 +25,7 @@ width2 = 0.05 # Ширина хвоста, шпиля
 timeout = time.time() + 60*60*12  # время, которое будет работать скрипт
 TF = '15m' # таймфрейм
 wait_time = 15 # сколько минут ждать для обновления цены с биржи
-TP = 0.002 # Тейк профит, процент
+TP = 0.008 # Тейк профит, процент
 SL = 0.002 # Стоп лосс, процент
 DEPO = 100 # Депозит
 Leverage = 20 # торговое плечо
@@ -254,19 +254,23 @@ def check_trade(price):
         if float(now_price_trade)>float(take_profit_price):
             close_trade('+',TP)
             count_long_take=count_long_take+1
+            time.sleep(wait_time*2)
             return 1
         if float(now_price_trade)<float(stop_loss_price):
             count_long_loss = count_long_loss + 1
             close_trade('-',SL)
+            time.sleep(wait_time*2)
             return 1
     if signal_trade == 'short':
         if float(now_price_trade)<float(take_profit_price):
             close_trade('+',TP)
             count_short_take = count_short_take+1
+            time.sleep(wait_time*2)
             return 1
         if float(now_price_trade)>float(stop_loss_price):
             count_short_loss = count_short_loss + 1
             close_trade('-',SL)
+            time.sleep(wait_time*2)
             return 1
 # -------------------------------------- ТОРГОВЛЯ --------------------------------------
 # -------------------------------------- СТРАТЕГИЯ --------------------------------------
@@ -322,6 +326,7 @@ while True:
             # symbol = 'UMAUSDT'
             if trend == "нет сигнала":
                 logger(time.strftime("%d.%m.%Y г. %H:%M", time.localtime()) + ' - Нет сигнала')
+                prt(f'{name_bot}| {time.strftime("%d.%m.%Y г. %H:%M", time.localtime())} - Нет сигнала, ждём {wait_time*2} минут')
                 time.sleep(wait_time*2) # Двойной интервал, если нет сигнала
             else:
                 print(f'Проверка монеты - {symbol}')
@@ -330,7 +335,7 @@ while True:
         if open_sl == True:
             loop = asyncio.get_event_loop()
             loop.run_until_complete(websocket_trade())
-        if DEPO < 0:
+        if DEPO < 20:
             logger('Бот слил всё депо! Завершили работу бота')
             logger(sost_trading)
             logger(f'Бот {name_bot} слил всё депо! Завершили работу бота') #
