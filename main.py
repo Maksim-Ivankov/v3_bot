@@ -316,7 +316,7 @@ while True:
         sost_trading = 'Депозит = '+str(DEPO)+'| Сделки в плюс принесли '+str(profit)+'| Сделки в минус принесли '+str(loss)+'| На комиссию потратил '+str(commission)
         if open_sl == False:
             if sost_trade == 1:
-                time.sleep(wait_time*2) # Двойной интервал, если была сделка
+                time.sleep(wait_time*2*60) # Двойной интервал, если была сделка
             else:
                 sost_trade = 0
                 for x,result in enumerate(coin_mas_10):
@@ -333,7 +333,7 @@ while True:
                 if trend == "нет сигнала":
                     logger(time.strftime("%d.%m.%Y г. %H:%M", time.localtime()) + ' - Нет сигнала')
                     prt(f'{name_bot}| {time.strftime("%d.%m.%Y г. %H:%M", time.localtime())} - Нет сигнала, ждём {wait_time*2} минут')
-                    time.sleep(wait_time*2) # Двойной интервал, если нет сигнала
+                    time.sleep(wait_time*2*60) # Двойной интервал, если нет сигнала
                 else:
                     print(f'Проверка монеты - {symbol}')
                     price__now = get_price_now_coin(symbol)
