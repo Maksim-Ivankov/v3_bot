@@ -25,7 +25,7 @@ width2 = 0.05 # Ширина хвоста, шпиля
 timeout = time.time() + 60*60*12  # время, которое будет работать скрипт
 TF = '15m' # таймфрейм
 wait_time = 15 # сколько минут ждать для обновления цены с биржи
-TP = 0.008 # Тейк профит, процент
+TP = 0.002 # Тейк профит, процент
 SL = 0.002 # Стоп лосс, процент
 DEPO = 100 # Депозит
 Leverage = 20 # торговое плечо
@@ -317,19 +317,19 @@ while True:
         if open_sl == False:
             if sost_trade == 1:
                 time.sleep(wait_time*2*60) # Двойной интервал, если была сделка
-            else:
                 sost_trade = 0
+            else: 
                 for x,result in enumerate(coin_mas_10):
                     print(result)
                     prices = get_futures_klines(result,TF,volume)
                     trend = check_if_signal(prices,volume)
-                    time.sleep(2) # Интервал в 10 секунд, чтобы бинанс не долбить
+                    time.sleep(2) # Интервал в 2 секунд, чтобы бинанс не долбить
                     if trend != 'нет сигнала':
                         symbol = result
                         print(f'Монета с сигналом - {symbol}')
                         break
-                # trend = 'long'
-                # symbol = 'UMAUSDT'
+                trend = 'long'
+                symbol = 'UMAUSDT'
                 if trend == "нет сигнала":
                     logger(time.strftime("%d.%m.%Y г. %H:%M", time.localtime()) + ' - Нет сигнала')
                     prt(f'{name_bot}| {time.strftime("%d.%m.%Y г. %H:%M", time.localtime())} - Нет сигнала, ждём {wait_time*2} минут')
